@@ -2,6 +2,7 @@ import tkinter as tk
 import pynput
 import time
 import winsound
+import pygetwindow as gw
 from tkinter import Tk
 from pynput.keyboard import Key, Controller, Listener, KeyCode
 
@@ -20,8 +21,13 @@ for i, mod in enumerate(bad_mods):
 
 
 def process_item():
+    
     # get item from the clippboard, convert to lower case
-    item = str(Tk().clipboard_get()).lower()
+    try:
+        item = str(Tk().clipboard_get()).lower()
+    except:
+        item = ""
+
     # tries to find any mod specified in bad_mods in the copied items' text
     if any(mod in item for mod in bad_mods):
         frequency = 500
@@ -35,6 +41,10 @@ def process_key(key):
     if (time.time() - time_pressed > 0.1):
         time_pressed = time.time()
     else:
+        return
+    
+    #ignore key press when PoE is not the active window
+    if gw.getActiveWindow().title != "Path of Exile":
         return
 
     if key == Key.shift_l:
